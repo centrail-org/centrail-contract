@@ -1,0 +1,372 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://centrail.org/contract/wire.schema.json",
+  "title": "Centrail CLI wire contract",
+  "description": "Every request body the Centrail CLI may send, wire version 1. Closed: a key not named here is not part of the contract and must not be sent. Fields annotated with x-capability are sent only when the server lists that capability in GET /api/cli/capabilities AND the install has answered the scope question; with no capability granted, a body is the 0.5.1 shape exactly.",
+  "$defs": {
+    "IngestBody": {
+      "description": "POST /api/cli/ingest. One agent surface per body.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "events"],
+      "properties": {
+        "source": { "$ref": "#/$defs/Source" },
+        "events": {
+          "type": "array",
+          "maxItems": 500,
+          "items": { "$ref": "#/$defs/IngestEvent" }
+        }
+      },
+      "allOf": [
+        {
+          "description": "pi and gemini-cli carry a bounded billing route on every event; other surfaces never do.",
+          "if": {
+            "properties": { "source": { "properties": { "surface": { "enum": ["pi", "gemini-cli"] } } } }
+          },
+          "then": {
+            "properties": { "events": { "items": { "required": ["billingProvider"] } } }
+          },
+          "else": {
+            "properties": {
+              "events": {
+                "items": { "properties": { "billingProvider": false, "serviceClass": false } }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "Source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["surface", "kind"],
+      "properties": {
+        "surface": { "$ref": "#/$defs/Surface" },
+        "kind": { "const": "local_logs" }
+      }
+    },
+    "Surface": {
+      "description": "Which agent's local usage log the events were read from.",
+      "enum": ["claude-code", "copilot-cli", "codex", "pi", "gemini-cli"]
+    },
+    "IngestEvent": {
+      "description": "One model request's usage. Token counts, model, time and an opaque id; nothing of the conversation.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "externalId", "model", "inputTokens", "outputTokens", "cacheReadTokens",
+        "cacheCreationTokens", "cacheCreation5mTokens", "cacheCreation1hTokens", "occurredAt"
+      ],
+      "properties": {
+        "externalId": {
+          "description": "Opaque deduplication id from the agent's usage log (a request id, or msg:<message id>).",
+          "type": "string", "minLength": 1, "maxLength": 512
+        },
+        "model": { "type": "string", "minLength": 1, "maxLength": 255 },
+        "inputTokens": { "$ref": "#/$defs/TokenCount" },
+        "outputTokens": { "$ref": "#/$defs/TokenCount" },
+        "cacheReadTokens": { "$ref": "#/$defs/TokenCount" },
+        "cacheCreationTokens": {
+          "description": "Legacy aggregate cache-creation count; never added to cost separately.",
+          "$ref": "#/$defs/TokenCount"
+        },
+        "cacheWriteTokens": {
+          "description": "Provider-neutral cache-write bucket. Optional; servers default it to 0.",
+          "$ref": "#/$defs/TokenCount"
+        },
+        "cacheCreation5mTokens": { "$ref": "#/$defs/TokenCount" },
+        "cacheCreation1hTokens": { "$ref": "#/$defs/TokenCount" },
+        "occurredAt": { "$ref": "#/$defs/IsoInstant" },
+        "speed": {
+          "x-capability": "usage-extras",
+          "description": "Claude usage.speed, e.g. standard or fast.",
+          "type": "string", "pattern": "^[a-z_-]{1,32}$"
+        },
+        "webSearchRequests": {
+          "x-capability": "usage-extras",
+          "description": "usage.server_tool_use.web_search_requests; absent when zero.",
+          "type": "integer", "minimum": 1, "maximum": 10000
+        },
+        "metadata": { "x-capability": "repo", "$ref": "#/$defs/EventMetadata" },
+        "billingProvider": { "x-capability": "billing-route", "$ref": "#/$defs/BillingProvider" },
+        "serviceClass": { "x-capability": "billing-route", "$ref": "#/$defs/ServiceClass" }
+      }
+    },
+    "EventMetadata": {
+      "description": "Identity of the work an event belongs to. Only to a server that lists repo, only once the scope question is answered. Each key is absent when unknown.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin"],
+      "properties": {
+        "repo": { "$ref": "#/$defs/RepoIdentity" },
+        "placement": { "$ref": "#/$defs/Placement" },
+        "sessionId": {
+          "description": "The agent's session id, plaintext (pi: and gemini: prefixed for those surfaces).",
+          "type": "string", "minLength": 1, "maxLength": 255
+        },
+        "gitBranch": {
+          "description": "The session's branch; absent under hideBranchNames.",
+          "$ref": "#/$defs/BranchName"
+        },
+        "origin": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["machineId"],
+          "properties": { "machineId": { "$ref": "#/$defs/InstallId" } }
+        }
+      },
+      "dependentRequired": { "placement": ["repo"] }
+    },
+    "RepoIdentity": {
+      "description": "key is what grouping binds to; label is display only (the folder basename, empty under hideRepoNames); root is the root commit sha, withheld under hideRepoNames and never on a dir: key.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "label", "source"],
+      "properties": {
+        "key": { "$ref": "#/$defs/RepoKey" },
+        "label": { "$ref": "#/$defs/RepoLabel" },
+        "source": { "enum": ["remote", "root", "folder"] },
+        "root": { "$ref": "#/$defs/ObjectId" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "key": { "pattern": "^sha:" } } },
+          "then": { "properties": { "source": { "const": "root" } } }
+        },
+        {
+          "if": { "properties": { "key": { "pattern": "^dir:" } } },
+          "then": { "properties": { "source": { "const": "folder" }, "root": false } }
+        },
+        {
+          "if": { "properties": { "key": { "pattern": "^hidden:" } } },
+          "then": { "properties": { "source": { "enum": ["remote", "root"] }, "root": false } }
+        },
+        {
+          "if": { "properties": { "key": { "not": { "pattern": "^(sha|dir|hidden):" } } } },
+          "then": { "properties": { "source": { "const": "remote" } } }
+        }
+      ]
+    },
+    "RepoKey": {
+      "description": "host/owner/repo of the canonical remote (lowercase, host has a dot), sha:<root commit>, dir:<hmac16> (a folder that is not a repo; keyed hash of its path) or hidden:<hmac16> (a repo the user chose not to name). Never a path or a URL.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "pattern": "^(?:(?:[a-z0-9-]+\\.)+[a-z0-9-]+(?:/[^\\s/]+)+|sha:[0-9a-f]{40,64}|dir:[0-9a-f]{16}|hidden:[0-9a-f]{16})$",
+      "allOf": [
+        { "not": { "pattern": "\\p{Lu}" } },
+        { "not": { "pattern": "(^|/)\\.\\.?(/|$)" } }
+      ]
+    },
+    "RepoLabel": {
+      "description": "A folder basename: never a path.",
+      "type": "string",
+      "maxLength": 255,
+      "pattern": "^[^/\\\\]*$"
+    },
+    "RepoName": {
+      "description": "A repo's display name on the attribute route: its label, or under hideRepoNames its hidden: key. Never empty, never a path.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "pattern": "^[^/\\\\]*$"
+    },
+    "Placement": {
+      "description": "How the CLI chose the event's repo: cwd (the session's folder is inside it), files (the turn's touched files named it), sticky (the session's previous turn), folder (its own dir: id). The touched paths never leave the machine.",
+      "enum": ["cwd", "files", "sticky", "folder"]
+    },
+    "BillingProvider": {
+      "description": "A bounded provider label; anything else (a custom endpoint) is sent as unknown.",
+      "enum": ["anthropic", "openai", "google", "openrouter", "amazon-bedrock", "google-vertex", "azure", "openai-codex", "github-copilot", "unknown"]
+    },
+    "ServiceClass": { "enum": ["standard", "priority", "flex", "batch", "unknown"] },
+    "AttributeBody": {
+      "description": "POST /api/cli/attribute. Either an attributions call (repos + attributions) or a per-repo fates call (repos + attributions: [] + fates + facts). Counts and hashes only: no commit content.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repos", "attributions"],
+      "properties": {
+        "repos": { "type": "array", "items": { "$ref": "#/$defs/Repo" } },
+        "attributions": {
+          "type": "array",
+          "maxItems": 2000,
+          "items": { "$ref": "#/$defs/Attribution" }
+        },
+        "fates": {
+          "type": "array",
+          "maxItems": 2000,
+          "items": { "$ref": "#/$defs/Fate" }
+        },
+        "facts": { "x-capability": "repo", "$ref": "#/$defs/FatesFacts" }
+      }
+    },
+    "Repo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "totalLoc", "fileCount"],
+      "properties": {
+        "name": { "$ref": "#/$defs/RepoName" },
+        "key": { "x-capability": "repo", "$ref": "#/$defs/RepoKey" },
+        "totalLoc": {
+          "description": "Total line count of tracked files; null when the repo is too large to read.",
+          "oneOf": [{ "$ref": "#/$defs/Count" }, { "type": "null" }]
+        },
+        "fileCount": { "$ref": "#/$defs/Count" }
+      }
+    },
+    "Attribution": {
+      "description": "One event matched to the commit it went into, by the CLI (only when the server does not match itself).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["externalId", "repoName", "commitSha", "committedAt", "branch", "linesAdded", "linesDeleted", "filesChanged"],
+      "properties": {
+        "externalId": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "repoName": { "$ref": "#/$defs/RepoName" },
+        "repoKey": { "x-capability": "repo", "$ref": "#/$defs/RepoKey" },
+        "commitSha": { "$ref": "#/$defs/ObjectId" },
+        "committedAt": { "$ref": "#/$defs/IsoInstant" },
+        "branch": { "$ref": "#/$defs/NullableBranch" },
+        "linesAdded": { "$ref": "#/$defs/Count" },
+        "linesDeleted": { "$ref": "#/$defs/Count" },
+        "filesChanged": { "$ref": "#/$defs/Count" }
+      }
+    },
+    "Fate": {
+      "description": "A commit's ship status. To any server: repoName, commitSha, branch, fate. The rest only with the named capability.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repoName", "commitSha", "branch", "fate"],
+      "properties": {
+        "repoName": { "$ref": "#/$defs/RepoName" },
+        "repoKey": { "x-capability": "repo", "$ref": "#/$defs/RepoKey" },
+        "commitSha": { "$ref": "#/$defs/ObjectId" },
+        "branch": { "$ref": "#/$defs/NullableBranch" },
+        "fate": { "enum": ["shipped", "in_flight", "unshipped"] },
+        "mergedAs": {
+          "x-capability": "repo",
+          "description": "The default-branch commit this commit's work was squashed into.",
+          "$ref": "#/$defs/ObjectId"
+        },
+        "committedAt": {
+          "x-capability": "repo",
+          "description": "ISO instant; empty (with zero counts) when the CLI does not know the commit's facts.",
+          "oneOf": [{ "$ref": "#/$defs/IsoInstant" }, { "const": "" }]
+        },
+        "linesAdded": { "x-capability": "repo", "$ref": "#/$defs/Count" },
+        "linesDeleted": { "x-capability": "repo", "$ref": "#/$defs/Count" },
+        "filesChanged": { "x-capability": "repo", "$ref": "#/$defs/Count" },
+        "mine": {
+          "x-capability": "repo",
+          "description": "The commit's author is this machine's git identity. The address itself never leaves.",
+          "type": "boolean"
+        },
+        "patchId": {
+          "x-capability": "patch-id",
+          "description": "git patch-id --stable of the commit's own diff: a hash, never the diff.",
+          "$ref": "#/$defs/ObjectId"
+        },
+        "branchPatchId": {
+          "x-capability": "patch-id",
+          "description": "git patch-id --stable of the cumulative diff from the merge base: a hash, never the diff.",
+          "$ref": "#/$defs/ObjectId"
+        }
+      },
+      "dependentRequired": {
+        "committedAt": ["linesAdded", "linesDeleted", "filesChanged"],
+        "linesAdded": ["committedAt", "linesDeleted", "filesChanged"],
+        "linesDeleted": ["committedAt", "linesAdded", "filesChanged"],
+        "filesChanged": ["committedAt", "linesAdded", "linesDeleted"]
+      }
+    },
+    "FatesFacts": {
+      "description": "Which install sent a fates call and whether it is the repo's complete recent history.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["machineId", "complete"],
+      "properties": {
+        "machineId": { "$ref": "#/$defs/InstallId" },
+        "complete": { "type": "boolean" }
+      }
+    },
+    "PairBody": {
+      "description": "POST /api/cli/pair. hostname is a fixed label, never the machine's name; installId only once the scope question is answered.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hostname"],
+      "properties": {
+        "hostname": { "const": "Centrail CLI" },
+        "installId": { "$ref": "#/$defs/InstallId" }
+      }
+    },
+    "PairPollBody": {
+      "description": "POST /api/cli/pair/poll. The token the server issued on /api/cli/pair, echoed back.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pollToken"],
+      "properties": { "pollToken": { "type": "string", "minLength": 1 } }
+    },
+    "ImportBody": {
+      "description": "POST /api/import (centrail import, outside wire 1): per-day, per-model aggregates from a ccusage export.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "rows"],
+      "properties": {
+        "provider": { "const": "ccusage" },
+        "rows": {
+          "type": "array",
+          "maxItems": 5000,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["day", "model", "inputTokens", "outputTokens", "contextTokens"],
+            "properties": {
+              "day": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+              "model": { "type": "string", "minLength": 1, "maxLength": 100 },
+              "inputTokens": { "$ref": "#/$defs/ImportCount" },
+              "outputTokens": { "$ref": "#/$defs/ImportCount" },
+              "contextTokens": {
+                "description": "Cache read plus cache creation.",
+                "$ref": "#/$defs/ImportCount"
+              }
+            }
+          }
+        }
+      }
+    },
+    "RequestHeaders": {
+      "description": "The two contract headers every request carries (others, such as authorization and content-type, are transport).",
+      "type": "object",
+      "required": ["centrail-cli-version", "centrail-wire"],
+      "properties": {
+        "centrail-cli-version": {
+          "type": "string",
+          "pattern": "^\\d{1,4}\\.\\d{1,4}\\.\\d{1,6}(?:-[0-9A-Za-z.-]{1,32})?(?:\\+[0-9A-Za-z.-]{1,32})?$"
+        },
+        "centrail-wire": { "const": "1" }
+      }
+    },
+    "TokenCount": { "type": "integer", "minimum": 0, "maximum": 1000000000 },
+    "Count": { "type": "integer", "minimum": 0, "maximum": 100000000 },
+    "ImportCount": { "type": "integer", "minimum": 0, "maximum": 1000000000000 },
+    "IsoInstant": {
+      "description": "UTC ISO-8601 instant, as Date.prototype.toISOString writes it.",
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    },
+    "ObjectId": {
+      "description": "A git object id or patch id: 40 (SHA-1) or 64 (SHA-256) lowercase hex.",
+      "type": "string",
+      "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+    },
+    "InstallId": {
+      "description": "The random per-install id (crypto.randomUUID, lowercase), derived from nothing on the machine.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "BranchName": { "type": "string", "minLength": 1, "maxLength": 255 },
+    "NullableBranch": {
+      "description": "A branch name, or null under hideBranchNames or when unknown.",
+      "oneOf": [{ "$ref": "#/$defs/BranchName" }, { "type": "null" }]
+    }
+  }
+}

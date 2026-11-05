@@ -1,0 +1,28 @@
+{
+  "name": "centrail-contract",
+  "version": "0.1.0",
+  "description": "The complete wire contract of the Centrail CLI: JSON Schema for every request body it may send, the never-uploaded allowlist tests, and TypeScript types.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./schema.json": "./schema/wire.schema.json",
+    "./package.json": "./package.json"
+  },
+  "files": ["src", "schema", "DISCREPANCIES.md"],
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "ajv": "8.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.1",
+    "typescript": "5.9.3"
+  }
+}
