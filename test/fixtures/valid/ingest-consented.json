@@ -1,0 +1,76 @@
+[
+  {
+    "source": { "surface": "claude-code", "kind": "local_logs" },
+    "events": [
+      {
+        "externalId": "req_hidden",
+        "model": "claude-opus-4-8",
+        "inputTokens": 100,
+        "outputTokens": 50,
+        "cacheReadTokens": 30,
+        "cacheCreationTokens": 40,
+        "cacheCreation5mTokens": 15,
+        "cacheCreation1hTokens": 25,
+        "occurredAt": "2026-06-01T12:00:00.000Z",
+        "speed": "fast",
+        "webSearchRequests": 2,
+        "metadata": {
+          "origin": { "machineId": "fc2aee07-3b90-46ce-97de-0517f3931f4f" },
+          "sessionId": "session-safe",
+          "placement": "files",
+          "repo": { "key": "hidden:0123456789abcdef", "label": "", "source": "remote" }
+        }
+      },
+      {
+        "externalId": "msg:msg_01folder",
+        "model": "claude-sonnet-4-6",
+        "inputTokens": 1,
+        "outputTokens": 1,
+        "cacheReadTokens": 0,
+        "cacheCreationTokens": 0,
+        "cacheCreation5mTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "occurredAt": "2026-06-01T12:00:01.000Z",
+        "metadata": {
+          "origin": { "machineId": "fc2aee07-3b90-46ce-97de-0517f3931f4f" },
+          "placement": "folder",
+          "repo": { "key": "dir:fedcba9876543210", "label": "scratch", "source": "folder" },
+          "gitBranch": "feature/x"
+        }
+      },
+      {
+        "externalId": "req_rootkey",
+        "model": "claude-opus-4-8",
+        "inputTokens": 1,
+        "outputTokens": 1,
+        "cacheReadTokens": 0,
+        "cacheCreationTokens": 0,
+        "cacheCreation5mTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "occurredAt": "2026-06-01T12:00:02.000Z",
+        "metadata": {
+          "origin": { "machineId": "fc2aee07-3b90-46ce-97de-0517f3931f4f" },
+          "repo": {
+            "key": "sha:30c370eadecd60b0b3d048deab1b92cc534c0202",
+            "label": "local-only",
+            "source": "root",
+            "root": "30c370eadecd60b0b3d048deab1b92cc534c0202"
+          },
+          "placement": "cwd"
+        }
+      },
+      {
+        "externalId": "req_norepo",
+        "model": "claude-opus-4-8",
+        "inputTokens": 1,
+        "outputTokens": 1,
+        "cacheReadTokens": 0,
+        "cacheCreationTokens": 0,
+        "cacheCreation5mTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "occurredAt": "2026-06-01T12:00:03.000Z",
+        "metadata": { "origin": { "machineId": "fc2aee07-3b90-46ce-97de-0517f3931f4f" } }
+      }
+    ]
+  }
+]

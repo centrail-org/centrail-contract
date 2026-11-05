@@ -1,0 +1,133 @@
+{
+  "source": {
+    "surface": "claude-code",
+    "kind": "local_logs"
+  },
+  "events": [
+    {
+      "externalId": "req_think",
+      "model": "claude-opus-4-8",
+      "inputTokens": 10,
+      "outputTokens": 3,
+      "cacheReadTokens": 1000,
+      "cacheCreationTokens": 0,
+      "cacheCreation5mTokens": 0,
+      "cacheCreation1hTokens": 0,
+      "occurredAt": "2026-10-02T07:07:27.820Z",
+      "metadata": {
+        "origin": {
+          "machineId": "c448f026-f3f5-47d2-aa75-d550d5ac446a"
+        },
+        "repo": {
+          "key": "github.com/acme/a",
+          "label": "a",
+          "source": "remote",
+          "root": "30c370eadecd60b0b3d048deab1b92cc534c0202"
+        },
+        "placement": "files",
+        "sessionId": "s-ws",
+        "gitBranch": "HEAD"
+      }
+    },
+    {
+      "externalId": "req_edit_a",
+      "model": "claude-opus-4-8",
+      "inputTokens": 10,
+      "outputTokens": 40,
+      "cacheReadTokens": 1000,
+      "cacheCreationTokens": 0,
+      "cacheCreation5mTokens": 0,
+      "cacheCreation1hTokens": 0,
+      "occurredAt": "2026-10-02T07:07:28.820Z",
+      "metadata": {
+        "origin": {
+          "machineId": "c448f026-f3f5-47d2-aa75-d550d5ac446a"
+        },
+        "repo": {
+          "key": "github.com/acme/a",
+          "label": "a",
+          "source": "remote",
+          "root": "30c370eadecd60b0b3d048deab1b92cc534c0202"
+        },
+        "placement": "files",
+        "sessionId": "s-ws",
+        "gitBranch": "HEAD"
+      }
+    },
+    {
+      "externalId": "req_bash_b",
+      "model": "claude-opus-4-8",
+      "inputTokens": 10,
+      "outputTokens": 9,
+      "cacheReadTokens": 1000,
+      "cacheCreationTokens": 0,
+      "cacheCreation5mTokens": 0,
+      "cacheCreation1hTokens": 0,
+      "occurredAt": "2026-10-02T07:07:30.820Z",
+      "metadata": {
+        "origin": {
+          "machineId": "c448f026-f3f5-47d2-aa75-d550d5ac446a"
+        },
+        "repo": {
+          "key": "github.com/acme/b",
+          "label": "b-wt",
+          "source": "remote",
+          "root": "30c370eadecd60b0b3d048deab1b92cc534c0202"
+        },
+        "placement": "files",
+        "sessionId": "s-ws",
+        "gitBranch": "HEAD"
+      }
+    },
+    {
+      "externalId": "req_sticky",
+      "model": "claude-opus-4-8",
+      "inputTokens": 10,
+      "outputTokens": 2,
+      "cacheReadTokens": 1000,
+      "cacheCreationTokens": 0,
+      "cacheCreation5mTokens": 0,
+      "cacheCreation1hTokens": 0,
+      "occurredAt": "2026-10-02T07:07:32.820Z",
+      "metadata": {
+        "origin": {
+          "machineId": "c448f026-f3f5-47d2-aa75-d550d5ac446a"
+        },
+        "repo": {
+          "key": "github.com/acme/b",
+          "label": "b-wt",
+          "source": "remote",
+          "root": "30c370eadecd60b0b3d048deab1b92cc534c0202"
+        },
+        "placement": "sticky",
+        "sessionId": "s-ws",
+        "gitBranch": "HEAD"
+      }
+    },
+    {
+      "externalId": "req_live",
+      "model": "claude-opus-4-8",
+      "inputTokens": 10,
+      "outputTokens": 7,
+      "cacheReadTokens": 1000,
+      "cacheCreationTokens": 0,
+      "cacheCreation5mTokens": 0,
+      "cacheCreation1hTokens": 0,
+      "occurredAt": "2026-10-02T07:07:33.820Z",
+      "metadata": {
+        "origin": {
+          "machineId": "c448f026-f3f5-47d2-aa75-d550d5ac446a"
+        },
+        "repo": {
+          "key": "github.com/acme/a",
+          "label": "a",
+          "source": "remote",
+          "root": "30c370eadecd60b0b3d048deab1b92cc534c0202"
+        },
+        "placement": "cwd",
+        "sessionId": "s-live",
+        "gitBranch": "HEAD"
+      }
+    }
+  ]
+}

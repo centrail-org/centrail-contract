@@ -1,0 +1,24 @@
+[
+  {
+    "repos": [{ "name": "repo", "totalLoc": null, "fileCount": 12000 }],
+    "attributions": [
+      {
+        "externalId": "req_011CVxyz",
+        "repoName": "repo",
+        "commitSha": "1111111111111111111111111111111111111111",
+        "committedAt": "2026-09-30T12:00:00.000Z",
+        "branch": "feature/x",
+        "linesAdded": 3,
+        "linesDeleted": 1,
+        "filesChanged": 2
+      }
+    ]
+  },
+  {
+    "repos": [{ "name": "repo", "totalLoc": 4200, "fileCount": 31 }],
+    "attributions": [],
+    "fates": [
+      { "repoName": "repo", "commitSha": "1111111111111111111111111111111111111111", "branch": null, "fate": "unshipped" }
+    ]
+  }
+]

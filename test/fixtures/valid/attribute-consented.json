@@ -1,0 +1,37 @@
+[
+  {
+    "repos": [{ "name": "hidden:0123456789abcdef", "key": "hidden:0123456789abcdef", "totalLoc": 10, "fileCount": 1 }],
+    "attributions": [],
+    "fates": [
+      {
+        "repoName": "hidden:0123456789abcdef",
+        "repoKey": "hidden:0123456789abcdef",
+        "commitSha": "1111111111111111111111111111111111111111",
+        "branch": null,
+        "fate": "shipped",
+        "mergedAs": "2222222222222222222222222222222222222222",
+        "committedAt": "",
+        "linesAdded": 0,
+        "linesDeleted": 0,
+        "filesChanged": 0
+      }
+    ],
+    "facts": { "machineId": "fc2aee07-3b90-46ce-97de-0517f3931f4f", "complete": false }
+  },
+  {
+    "repos": [{ "name": "repo", "key": "github.com/acme/repo", "totalLoc": 10, "fileCount": 1 }],
+    "attributions": [
+      {
+        "externalId": "req_1",
+        "repoName": "repo",
+        "repoKey": "github.com/acme/repo",
+        "commitSha": "1111111111111111111111111111111111111111111111111111111111111111",
+        "committedAt": "2026-09-30T12:00:00.000Z",
+        "branch": null,
+        "linesAdded": 1,
+        "linesDeleted": 0,
+        "filesChanged": 1
+      }
+    ]
+  }
+]

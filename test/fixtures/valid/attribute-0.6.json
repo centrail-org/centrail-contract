@@ -1,0 +1,87 @@
+[
+  {
+    "repos": [
+      {
+        "name": "a",
+        "key": "github.com/acme/a",
+        "totalLoc": 4,
+        "fileCount": 2
+      }
+    ],
+    "attributions": [],
+    "fates": [
+      {
+        "repoName": "a",
+        "repoKey": "github.com/acme/a",
+        "commitSha": "314804fba67ef0d9bb47eb62c06ac66cfdf46eec",
+        "branch": "main",
+        "fate": "shipped",
+        "committedAt": "2026-10-02T07:17:26.000Z",
+        "linesAdded": 1,
+        "linesDeleted": 0,
+        "filesChanged": 1,
+        "mine": true,
+        "patchId": "5fbcc3e7625125fe7b462908d15d9b39a26b097e"
+      },
+      {
+        "repoName": "a",
+        "repoKey": "github.com/acme/a",
+        "commitSha": "30c370eadecd60b0b3d048deab1b92cc534c0202",
+        "branch": "main",
+        "fate": "shipped",
+        "committedAt": "2026-10-02T07:17:26.000Z",
+        "linesAdded": 1,
+        "linesDeleted": 0,
+        "filesChanged": 1,
+        "mine": true
+      }
+    ],
+    "facts": {
+      "machineId": "c448f026-f3f5-47d2-aa75-d550d5ac446a",
+      "complete": true
+    }
+  },
+  {
+    "repos": [
+      {
+        "name": "b-wt",
+        "key": "github.com/acme/b",
+        "totalLoc": 2,
+        "fileCount": 1
+      }
+    ],
+    "attributions": [],
+    "fates": [
+      {
+        "repoName": "b-wt",
+        "repoKey": "github.com/acme/b",
+        "commitSha": "30c370eadecd60b0b3d048deab1b92cc534c0202",
+        "branch": "main",
+        "fate": "shipped",
+        "committedAt": "2026-10-02T07:17:26.000Z",
+        "linesAdded": 1,
+        "linesDeleted": 0,
+        "filesChanged": 1,
+        "mine": true
+      },
+      {
+        "repoName": "b-wt",
+        "repoKey": "github.com/acme/b",
+        "commitSha": "7c0ea1c7fcbf64285f5167b494a13b5a26117111",
+        "branch": "wt",
+        "fate": "in_flight",
+        "committedAt": "2026-10-02T07:17:26.000Z",
+        "linesAdded": 2,
+        "linesDeleted": 0,
+        "filesChanged": 1,
+        "mine": true,
+        "patchId": "156d245b7bef5338ce37abdaa9346039ae01b30f",
+        "branchPatchId": "156d245b7bef5338ce37abdaa9346039ae01b30f"
+      }
+    ],
+    "facts": {
+      "machineId": "c448f026-f3f5-47d2-aa75-d550d5ac446a",
+      "complete": true
+    }
+  }
+]

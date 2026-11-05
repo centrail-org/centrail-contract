@@ -1,0 +1,4 @@
+[
+  { "centrail-cli-version": "0.9.0", "centrail-wire": "1" },
+  { "centrail-cli-version": "0.10.0-rc.1", "centrail-wire": "1", "authorization": "Bearer t", "content-type": "application/json" }
+]

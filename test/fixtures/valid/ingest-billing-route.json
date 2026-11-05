@@ -1,0 +1,42 @@
+[
+  {
+    "source": { "surface": "pi", "kind": "local_logs" },
+    "events": [
+      {
+        "externalId": "pi:message-safe",
+        "model": "gpt-5",
+        "inputTokens": 100,
+        "outputTokens": 50,
+        "cacheReadTokens": 30,
+        "cacheCreationTokens": 0,
+        "cacheWriteTokens": 0,
+        "cacheCreation5mTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "occurredAt": "2026-06-01T12:00:00.000Z",
+        "billingProvider": "openai-codex",
+        "serviceClass": "standard",
+        "metadata": {
+          "origin": { "machineId": "fc2aee07-3b90-46ce-97de-0517f3931f4f" },
+          "sessionId": "pi:session-safe"
+        }
+      }
+    ]
+  },
+  {
+    "source": { "surface": "gemini-cli", "kind": "local_logs" },
+    "events": [
+      {
+        "externalId": "gemini:message-safe",
+        "model": "gemini-2.5-pro",
+        "inputTokens": 100,
+        "outputTokens": 50,
+        "cacheReadTokens": 30,
+        "cacheCreationTokens": 0,
+        "cacheCreation5mTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "occurredAt": "2026-06-01T12:00:00.000Z",
+        "billingProvider": "unknown"
+      }
+    ]
+  }
+]

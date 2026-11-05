@@ -1,0 +1,9 @@
+[
+  {
+    "provider": "ccusage",
+    "rows": [
+      { "day": "2026-06-01", "model": "claude-opus-4-8", "inputTokens": 1200, "outputTokens": 340, "contextTokens": 98000 }
+    ]
+  },
+  { "provider": "ccusage", "rows": [] }
+]

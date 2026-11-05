@@ -1,0 +1,36 @@
+[
+  {
+    "source": { "surface": "claude-code", "kind": "local_logs" },
+    "events": [
+      {
+        "externalId": "req_011CVxyz",
+        "model": "claude-opus-4-8",
+        "inputTokens": 100,
+        "outputTokens": 50,
+        "cacheReadTokens": 30,
+        "cacheCreationTokens": 40,
+        "cacheCreation5mTokens": 15,
+        "cacheCreation1hTokens": 25,
+        "occurredAt": "2026-06-01T12:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "source": { "surface": "codex", "kind": "local_logs" },
+    "events": [
+      {
+        "externalId": "codex:0199a3c4-request-7",
+        "model": "gpt-5.6-sol",
+        "inputTokens": 170,
+        "outputTokens": 50,
+        "cacheReadTokens": 30,
+        "cacheCreationTokens": 40,
+        "cacheWriteTokens": 40,
+        "cacheCreation5mTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "occurredAt": "2026-06-01T12:00:00Z"
+      }
+    ]
+  },
+  { "source": { "surface": "copilot-cli", "kind": "local_logs" }, "events": [] }
+]
